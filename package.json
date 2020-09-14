@@ -1,0 +1,15 @@
+{
+  "name": "szfcweb-monitor",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:jianggaocheng/szfcweb-monitor.git",
+  "author": "Kenny Jiang <kenny.jiang@zoom.us>",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^3.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "lodash": "^4.17.20",
+    "log4js": "^6.3.0",
+    "superagent": "^6.0.0"
+  }
+}

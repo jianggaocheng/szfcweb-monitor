@@ -13,10 +13,38 @@ let sellingCount = 0;
 let soldCount = 0;
 let disableCount = 0;
 
-let projectInterval = 1200;
-let buildingInterval = 1200;
+let projectInterval = 1000;
+let buildingInterval = 2000;
 
 const projectQueue = async.queue(function(project, callback) {
+  const buildingQueue = async.queue(function({
+    szfcClient,
+    building
+  }, callback) {
+    setTimeout(async () => {
+      try {
+        let houseList = await szfcClient.getHouseList(building.project.id, building.id);
+        logger.info(`正在获取 [${building.project.district}] [${building.project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length}`);
+        callback(null, houseList);
+      } catch (e) {
+        callback(e, []);
+      }
+    }, buildingInterval);
+  }, 1);
+
+  buildingQueue.error(function(err, {szfcClient, building}) {
+    let retryCount = RETRY_MAP[building.project.id + building.id] != null ? RETRY_MAP[building.project.id + building.id] : 0;
+    
+    // buildingQueue.push({szfcClient, building}, saveHouseList);
+    projectQueue.push(building.project);
+    RETRY_MAP[building.project.id + building.id] = ++retryCount;
+    logger.error(`重试 [${building.project.name}] [${building.name}] 第 ${++retryCount} 次`);
+  });
+  
+  const saveHouseList = function(err, houseList) {
+    totalHouseList = _.uniqBy(_.concat(totalHouseList, houseList), 'identifier');
+  }
+
   setTimeout(async ()=> {
     let szfcClient = await new SzfcClient();
 
@@ -34,22 +62,7 @@ const projectQueue = async.queue(function(project, callback) {
       callback(e);
     }
   }, projectInterval);
-}, 10);
-
-const buildingQueue = async.queue(function({
-    szfcClient,
-    building
-  }, callback) {
-  setTimeout(async () => {
-    try {
-      let houseList = await szfcClient.getHouseList(building.project.id, building.id);
-      logger.info(`正在获取 [${building.project.district}] [${building.project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length}`);
-      callback(null, houseList);
-    } catch (e) {
-      callback(e, []);
-    }
-  }, buildingInterval);
-}, 1);
+}, 50);
 
 projectQueue.error(function(err, project) {
   let retryCount = RETRY_MAP[project.id] != null ? RETRY_MAP[project.id] : 0;
@@ -60,24 +73,10 @@ projectQueue.error(function(err, project) {
   logger.error(`重试 [${project.name}] 第 ${retryCount + 1} 次`);
 });
 
-buildingQueue.error(function(err, {szfcClient, building}) {
-  let retryCount = RETRY_MAP[building.project.id + building.id] != null ? RETRY_MAP[building.project.id + building.id] : 0;
-  
-  buildingQueue.push({szfcClient, building}, saveHouseList);
-  RETRY_MAP[building.project.id + building.id] = ++retryCount;
-
-  logger.error(`重试 [${building.project.name}] [${building.name}] 第 ${++retryCount} 次`);
-});
-
-const saveHouseList = function(err, houseList) {
-  totalHouseList = _.concat(totalHouseList, houseList);
-}
-
 const calcResult = function() {
   let endTimeStamp = new Date().getTime();
 
   logger.info(`Project queue: ${projectQueue.length()}`);
-  logger.info(`Building queue: ${buildingQueue.length()}`);
   logger.info(`花费时间: ${(endTimeStamp - startTimeStamp)/1000} 秒`);
   logger.info(`取得数据: ${totalHouseList.length} 条`);
 

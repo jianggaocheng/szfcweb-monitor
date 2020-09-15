@@ -3,7 +3,9 @@ const async = require('async');
 // create a queue object with concurrency 2
 var q = async.queue(function(task, callback) {
   console.log('hello ' + task.name);
-  setTimeout(callback, 1000);
+  setTimeout(()=>{
+    callback(null, task);
+  }, 1000);
 }, 1);
 
 // assign a callback
@@ -12,8 +14,8 @@ q.drain(function() {
 });
 
 // add some items to the queue
-q.push({name: 'foo'}, function(err) {
-  console.log('finished processing foo');
+q.push({name: 'foo'}, function(err, task) {
+  console.log('finished processing foo', task.name);
 });
 // callback is optional
 q.push({name: 'bar'});

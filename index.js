@@ -1,5 +1,5 @@
 const { logger } = require('./lib/logger');
-const szfc = require('./lib/szfc');
+const SzfcClient = require('./lib/szfc');
 const _ = require('lodash');
 const { table } = require('table');
 const async = require('async');
@@ -13,33 +13,40 @@ let sellingCount = 0;
 let soldCount = 0;
 let disableCount = 0;
 
-let projectInterval = 1000;
-let buildingInterval = 1000;
+let projectInterval = 1200;
+let buildingInterval = 1200;
 
 const projectQueue = async.queue(function(project, callback) {
   setTimeout(async ()=> {
+    let szfcClient = await new SzfcClient();
+
     try {
-      let buildingList = await szfc.getBuildingList(project);
+      let buildingList = await szfcClient.getBuildingList(project);
       logger.info(`${project.name} 下取得 ${buildingList.length} 条楼栋`);
       _(buildingList).forEach(async function(building) {
-        buildingQueue.push(building);
+        buildingQueue.push({
+          szfcClient,
+          building
+        }, saveHouseList);
       });
       callback();
     } catch (e) {
       callback(e);
     }
   }, projectInterval);
-}, 1);
+}, 10);
 
-const buildingQueue = async.queue(function(building, callback) {
+const buildingQueue = async.queue(function({
+    szfcClient,
+    building
+  }, callback) {
   setTimeout(async () => {
     try {
-      let houseList = await szfc.getHouseList(building.project.id, building.id);
+      let houseList = await szfcClient.getHouseList(building.project.id, building.id);
       logger.info(`正在获取 [${building.project.district}] [${building.project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length}`);
-      totalHouseList = _.concat(totalHouseList, houseList);
-      callback();
+      callback(null, houseList);
     } catch (e) {
-      callback(e);
+      callback(e, []);
     }
   }, buildingInterval);
 }, 1);
@@ -47,24 +54,24 @@ const buildingQueue = async.queue(function(building, callback) {
 projectQueue.error(function(err, project) {
   let retryCount = RETRY_MAP[project.id] != null ? RETRY_MAP[project.id] : 0;
 
-  let retryInterval = _.round(_.random(1 + retryCount, 2 + retryCount, true) * 1000);
-  logger.error(`重试 [${project.name}] 第 ${retryCount + 1} 次 ${retryInterval} ms`);
   projectQueue.push(project);
   RETRY_MAP[project.id] = ++retryCount;
 
-  projectInterval += 100;
+  logger.error(`重试 [${project.name}] 第 ${retryCount + 1} 次`);
 });
 
-buildingQueue.error(function(err, building) {
+buildingQueue.error(function(err, {szfcClient, building}) {
   let retryCount = RETRY_MAP[building.project.id + building.id] != null ? RETRY_MAP[building.project.id + building.id] : 0;
   
-  let retryInterval = _.round(_.random(1 + retryCount, 2 + retryCount, true) * 1000);
-  logger.error(`重试 [${building.project.name}] [${building.name}] 第 ${++retryCount} 次 ${retryInterval} ms`);
-  buildingQueue.push(building);
+  buildingQueue.push({szfcClient, building}, saveHouseList);
   RETRY_MAP[building.project.id + building.id] = ++retryCount;
 
-  buildingInterval += 100;
+  logger.error(`重试 [${building.project.name}] [${building.name}] 第 ${++retryCount} 次`);
 });
+
+const saveHouseList = function(err, houseList) {
+  totalHouseList = _.concat(totalHouseList, houseList);
+}
 
 const calcResult = function() {
   let endTimeStamp = new Date().getTime();
@@ -90,7 +97,6 @@ const calcResult = function() {
 }
 
 process.on('SIGINT', function() {
-  calcResult();
   process.exit();
 });
 
@@ -101,20 +107,20 @@ process.on('exit', function() {
 startTimeStamp = new Date().getTime();
 
 (async function () {
-  await szfc.getSaleInfoProListIndex();
+  let szfcClient = await new SzfcClient();
 
-  let districtList = await szfc.getDistrictList();
+  let districtList = await szfcClient.getDistrictList();
   logger.debug(`取得 ${districtList.length} 个地区`);
 
   _(districtList).forEach(async function(district) {
-    let pageSize = await szfc.getProjectCount(district);
+    let pageSize = await szfcClient.getProjectCount(district);
 
     logger.info(`${district} 共有 ${pageSize} 页数据`);
 
     // Loop project list page
     for (let i=1; i<= pageSize; i++) {
-      let projectList = await szfc.getProjectList(district, i);
-      logger.info(`从 ${district} 第 ${i} 页取得 ${projectList.length} 条数据`);
+      let projectList = await szfcClient.getProjectList(district, i);
+      logger.debug(`从 ${district} 第 ${i} 页取得 ${projectList.length} 条数据`);
 
       // Loop building under project
       _(projectList).forEach(async function(project) {

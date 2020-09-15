@@ -5,6 +5,7 @@ const { table } = require('table');
 const async = require('async');
 const process = require('process');
 
+const RETRY_MAP = {};
 let totalHouseList = [];
 let startTimeStamp = 0;
 let unsellCount = 0;
@@ -12,27 +13,64 @@ let sellingCount = 0;
 let soldCount = 0;
 let disableCount = 0;
 
-const projectQueue = async.queue(async function(project, callback) {
-  let buildingList = await szfc.getBuildingList(project.id);
-  logger.info(`${project.name} 下取得 ${buildingList.length} 条楼栋`);
-  _(buildingList).forEach(async function(building) {
-    buildingQueue.push(building);
-  });
+let projectInterval = 1000;
+let buildingInterval = 1000;
 
-  setTimeout(callback, 1000);
-}, 5);
+const projectQueue = async.queue(function(project, callback) {
+  setTimeout(async ()=> {
+    try {
+      let buildingList = await szfc.getBuildingList(project);
+      logger.info(`${project.name} 下取得 ${buildingList.length} 条楼栋`);
+      _(buildingList).forEach(async function(building) {
+        buildingQueue.push(building);
+      });
+      callback();
+    } catch (e) {
+      callback(e);
+    }
+  }, projectInterval);
+}, 1);
 
-const buildingQueue = async.queue(async function(building, callback) {
-  let houseList = await szfc.getHouseList(project.id, building.id);
-    logger.info(`正在获取 [${project.district}] [${project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length}`);
-    _.merge(totalHouseList, houseList);
+const buildingQueue = async.queue(function(building, callback) {
+  setTimeout(async () => {
+    try {
+      let houseList = await szfc.getHouseList(building.project.id, building.id);
+      logger.info(`正在获取 [${building.project.district}] [${building.project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length}`);
+      totalHouseList = _.concat(totalHouseList, houseList);
+      callback();
+    } catch (e) {
+      callback(e);
+    }
+  }, buildingInterval);
+}, 1);
 
-  setTimeout(callback, 1000);
-}, 5);
+projectQueue.error(function(err, project) {
+  let retryCount = RETRY_MAP[project.id] != null ? RETRY_MAP[project.id] : 0;
+
+  let retryInterval = _.round(_.random(1 + retryCount, 2 + retryCount, true) * 1000);
+  logger.error(`重试 [${project.name}] 第 ${retryCount + 1} 次 ${retryInterval} ms`);
+  projectQueue.push(project);
+  RETRY_MAP[project.id] = ++retryCount;
+
+  projectInterval += 100;
+});
+
+buildingQueue.error(function(err, building) {
+  let retryCount = RETRY_MAP[building.project.id + building.id] != null ? RETRY_MAP[building.project.id + building.id] : 0;
+  
+  let retryInterval = _.round(_.random(1 + retryCount, 2 + retryCount, true) * 1000);
+  logger.error(`重试 [${building.project.name}] [${building.name}] 第 ${++retryCount} 次 ${retryInterval} ms`);
+  buildingQueue.push(building);
+  RETRY_MAP[building.project.id + building.id] = ++retryCount;
+
+  buildingInterval += 100;
+});
 
 const calcResult = function() {
   let endTimeStamp = new Date().getTime();
 
+  logger.info(`Project queue: ${projectQueue.length()}`);
+  logger.info(`Building queue: ${buildingQueue.length()}`);
   logger.info(`花费时间: ${(endTimeStamp - startTimeStamp)/1000} 秒`);
   logger.info(`取得数据: ${totalHouseList.length} 条`);
 
@@ -51,14 +89,18 @@ const calcResult = function() {
   logger.info("\n" + table(countTableData));
 }
 
-projectQueue.drain(calcResult);
 process.on('SIGINT', function() {
   calcResult();
   process.exit();
 });
 
+process.on('exit', function() {
+  calcResult();
+});
+
+startTimeStamp = new Date().getTime();
+
 (async function () {
-  startTimeStamp = new Date().getTime();
   await szfc.getSaleInfoProListIndex();
 
   let districtList = await szfc.getDistrictList();
@@ -80,18 +122,20 @@ process.on('SIGINT', function() {
       });
     }
   });
-
-  // let pageSize = await szfc.getProjectCount("工业园区");
-  // await szfc.getProjectList("工业园区", 1);
-  // let unsellCount = 0;
-  // let sellingCount = 0;
-  // let soldCount = 0;
-  // let disableCount = 0;
-  
-  // let buildingList = await szfc.getBuildingList("bc2a3814-105f-417c-a7d3-62d4d9d82f31");
-
-  // let houseList = await szfc.getHouseList("b040951a-3028-4b95-b6a2-439e019d013e", "30230_MD004");
-  
-  
 }());
 
+// (async function () {
+//   await szfc.getSaleInfoProListIndex();
+
+//   projectQueue.push([{
+//     id: 'b040951a-3028-4b95-b6a2-439e019d013e',
+//     name: '春风南岸花园一期',
+//     district: '高新区'
+//   }, {
+//     id: '4e5947bb-75a9-4a09-8167-291c7d16a3e2',
+//     name: '春风南岸花园二期',
+//     district: '高新区'
+//   }]);
+
+//   await Promise.all([projectQueue.drain(), buildingQueue.drain()]);
+// }());

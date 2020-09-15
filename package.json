@@ -10,6 +10,8 @@
     "cheerio": "^1.0.0-rc.3",
     "lodash": "^4.17.20",
     "log4js": "^6.3.0",
-    "superagent": "^6.0.0"
+    "query-string": "^6.13.2",
+    "superagent": "^6.0.0",
+    "table": "^6.0.3"
   }
 }

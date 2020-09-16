@@ -42,9 +42,6 @@ const projectQueue = async.queue(function(project, callback) {
   
   const saveHouseList = function(err, houseList) {
     totalHouseList = _.uniqBy(_.concat(totalHouseList, houseList), 'identifier');
-    _.map(houseList, function(house) {
-      compareHouse(house);
-    })
   }
 
   setTimeout(async ()=> {
@@ -92,6 +89,10 @@ const compareHouse = function(house) {
 }
 
 const calcResult = function() {
+  _.map(totalHouseList, function(house) {
+    compareHouse(house);
+  })
+
   let unsellCount = _.filter(totalHouseList, {houseStatus: 0}).length;
   let sellingCount = _.filter(totalHouseList, {houseStatus: 1}).length;
   let soldCount = _.filter(totalHouseList, {houseStatus: 2}).length;
@@ -105,12 +106,11 @@ const calcResult = function() {
   countTableData.push(['合计', totalHouseList.length]);
 
   logger.info("\n" + table(countTableData));
-  qywechat.sendMarkdown(table(countTableData));
 }
 
 async function startWatching() {
   // Random next tick
-  let nextTick = 30 * 1000 + _.random(30 * 1000);
+  let nextTick = 10 * 1000 + _.random(10 * 1000);
   logger.info("next tick", nextTick);
   setTimeout(startWatching, nextTick);
 

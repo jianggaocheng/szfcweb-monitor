@@ -110,7 +110,7 @@ const calcResult = function() {
 
 async function startWatching() {
   // Random next tick
-  let nextTick = 10 * 1000 + _.random(10 * 1000);
+  let nextTick = 30 * 1000 + _.random(30 * 1000);
   logger.info("next tick", nextTick);
   setTimeout(startWatching, nextTick);
 

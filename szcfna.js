@@ -23,7 +23,12 @@ const projectQueue = async.queue(function(project, callback) {
     setTimeout(async () => {
       try {
         let houseList = await szfcClient.getHouseList(building.project.id, building.id);
-        logger.info(`正在获取 [${building.project.district}] [${building.project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length}`);
+        let unsellCount = _.filter(houseList, {houseStatus: 0}).length;
+        let sellingCount = _.filter(houseList, {houseStatus: 1}).length;
+        let soldCount = _.filter(houseList, {houseStatus: 2}).length;
+        let disableCount = _.filter(houseList, {houseStatus: 3}).length;
+
+        logger.info(`正在获取 [${building.project.district}] [${building.project.name}] [${building.name}] 的网签记录, 获取数量 ${houseList.length} ${unsellCount}/${sellingCount}/${soldCount}/${disableCount}`);
         callback(null, houseList);
       } catch (e) {
         callback(e, []);
@@ -83,13 +88,15 @@ const compareHouse = function(house) {
     } else {
       logger.debug(`${house.identifier} 没有变化`);
     }
+  } else {
+    logger.debug(`${house.identifier} 创建数据`);
   }
 
   COMPARE_MAP.set(house.identifier, house);
 }
 
 const calcResult = function() {
-  _.map(totalHouseList, function(house) {
+  _.each(totalHouseList, function(house) {
     compareHouse(house);
   })
 

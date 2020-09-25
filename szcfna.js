@@ -86,10 +86,10 @@ const compareHouse = function(house) {
       logger.info(`${house.identifier} 状态变化, 原状态 [${STATUS_ARRAY[cachedHouse.houseStatus]}] -> 现状态 [${STATUS_ARRAY[house.houseStatus]}]`);
       qywechat.sendMarkdown(`**${house.identifier} 状态变化!!!**\n原状态 [${STATUS_ARRAY[cachedHouse.houseStatus]}] \n现状态 [${STATUS_ARRAY[house.houseStatus]}]`)
     } else {
-      logger.debug(`${house.identifier} 没有变化`);
+      logger.debug(`${house.identifier} 没有变化 ${house.houseStatus}`);
     }
   } else {
-    logger.debug(`${house.identifier} 创建数据`);
+    logger.debug(`${house.identifier} 创建数据 ${house.houseStatus}`);
   }
 
   COMPARE_MAP.set(house.identifier, house);
@@ -133,6 +133,7 @@ async function startWatching() {
     }]);
 
     calcResult();
+    totalHouseList = [];
   } catch (e) {
     logger.error(e);
   }

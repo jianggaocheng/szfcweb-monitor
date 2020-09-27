@@ -23,6 +23,12 @@ const projectQueue = async.queue(function(project, callback) {
     setTimeout(async () => {
       try {
         let houseList = await szfcClient.getHouseList(building.project.id, building.id);
+
+        // Append project and building info
+        _.each(houseList, (house) => {
+          house.project = project;
+          house.building = building;
+        });
         let unsellCount = _.filter(houseList, {houseStatus: 0}).length;
         let sellingCount = _.filter(houseList, {houseStatus: 1}).length;
         let soldCount = _.filter(houseList, {houseStatus: 2}).length;
@@ -83,8 +89,8 @@ const compareHouse = function(house) {
     let cachedHouse = COMPARE_MAP.get(house.identifier);
     if (cachedHouse.houseStatus != house.houseStatus) {
       // House status changed
-      logger.info(`${house.identifier} 状态变化, 原状态 [${STATUS_ARRAY[cachedHouse.houseStatus]}] -> 现状态 [${STATUS_ARRAY[house.houseStatus]}]`);
-      qywechat.sendMarkdown(`**${house.identifier} 状态变化!!!**\n原状态 [${STATUS_ARRAY[cachedHouse.houseStatus]}] \n现状态 [${STATUS_ARRAY[house.houseStatus]}]`)
+      logger.info(`${house.project.name} ${house.building.name}栋 ${house.houseSN}室 状态变化, 原状态 [${STATUS_ARRAY[cachedHouse.houseStatus]}] -> 现状态 [${STATUS_ARRAY[house.houseStatus]}]`);
+      qywechat.sendMarkdown(`**${house.project.name} ${house.building.name}栋 ${house.houseSN}室 状态变化!!!**\n原状态 [${STATUS_ARRAY[cachedHouse.houseStatus]}] \n现状态 [${STATUS_ARRAY[house.houseStatus]}]`);
     } else {
       logger.debug(`${house.identifier} 没有变化 ${house.houseStatus}`);
     }

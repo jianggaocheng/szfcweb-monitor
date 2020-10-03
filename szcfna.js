@@ -56,9 +56,9 @@ const projectQueue = async.queue(function(project, callback) {
   }
 
   setTimeout(async ()=> {
-    let szfcClient = await new SzfcClient();
-
     try {
+      let szfcClient = await new SzfcClient();
+
       let buildingList = await szfcClient.getBuildingList(project);
       logger.info(`${project.name} 下取得 ${buildingList.length} 条楼栋`);
       _(buildingList).forEach(async function(building) {

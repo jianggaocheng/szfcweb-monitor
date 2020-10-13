@@ -77,10 +77,11 @@ const projectQueue = async.queue(function(project, callback) {
 projectQueue.error(function(err, project) {
   let retryCount = RETRY_MAP[project.id] != null ? RETRY_MAP[project.id] : 0;
 
-  projectQueue.push(project);
+  // projectQueue.push(project);
   RETRY_MAP[project.id] = ++retryCount;
 
-  logger.error(`重试 [${project.name}] 第 ${retryCount + 1} 次`);
+  logger.error("project queue 出错", err);
+  logger.error(`出错 [${project.name}] 第 ${retryCount + 1} 次`);
 });
 
 const compareHouse = function(house) {

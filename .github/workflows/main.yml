@@ -1,0 +1,28 @@
+name: "Szcfna Monitor"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0/5 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: install packages 
+        run: npm install
+      - name: load data
+        uses: actions/download-artifact@v2
+        with:
+          name: housedata
+      - name: run job
+        run: node szcfna.js
+      - name: save data
+        uses: actions/upload-artifact@v2
+        with:
+          name: housedata
+          path: data

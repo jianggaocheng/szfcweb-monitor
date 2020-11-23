@@ -1,0 +1,19 @@
+name: "Szcfna Report"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 14 * * *"
+
+jobs:
+  check-house-status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: install packages 
+        run: npm install
+      - name: check house status
+        run: node daily-report.js

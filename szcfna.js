@@ -12,7 +12,6 @@ const utils = require('./lib/utils');
 const DATA_PATH = path.join("./data");
 const DATA_FILE = "cfna.json";
 
-const RETRY_MAP = {};
 let totalHouseList = [];
 let projectInterval = 1000;
 let buildingInterval = 2000;

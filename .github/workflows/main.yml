@@ -6,7 +6,7 @@ on:
     - cron: "0/5 * * * *"
 
 jobs:
-  build:
+  check-house-status:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,14 +15,16 @@ jobs:
           node-version: '12.x'
       - name: install packages 
         run: npm install
-      - name: load data
-        uses: actions/download-artifact@v2
-        with:
-          name: housedata
-      - name: run job
+      - name: check house status
         run: node szcfna.js
-      - name: save data
-        uses: actions/upload-artifact@v2
+      - name: commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Update data" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          name: housedata
-          path: data
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      

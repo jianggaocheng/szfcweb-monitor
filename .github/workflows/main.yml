@@ -2,8 +2,8 @@ name: "Szcfna Monitor"
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0/5 * * * *"
+  # schedule:
+  #   - cron: "0/5 * * * *"
 
 jobs:
   check-house-status:
@@ -21,6 +21,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git add --all 
           git commit -m "Update data" -a
       - name: Push changes
         uses: ad-m/github-push-action@master

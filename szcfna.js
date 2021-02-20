@@ -2,6 +2,7 @@ const SzfcClient = require('./lib/szfc');
 const QyWechat = require("./lib/qywechat");
 const _ = require('lodash');
 const { table } = require('table');
+const jsonFormat = require('json-format');
 const fs = require('fs');
 const path = require('path');
 const { logger } = require('./lib/logger');
@@ -132,7 +133,12 @@ function saveHouseStatus(data) {
     return;
   }
 
-  fs.writeFileSync(path.join(DATA_PATH, DATA_FILE), JSON.stringify(data));
+  let config = {
+    type: 'space',
+    size: 2
+  };
+
+  fs.writeFileSync(path.join(DATA_PATH, DATA_FILE), jsonFormat(data, config));
 }
 
 startWatching();

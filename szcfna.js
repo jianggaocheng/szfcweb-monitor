@@ -28,6 +28,10 @@ const PROJECT_LIST = [
     id: '4e5947bb-75a9-4a09-8167-291c7d16a3e2',
     name: '春风南岸花园二期',
     district: '高新区'
+  }, {
+    id: 'c0976b7b-26eb-44dd-8670-3e82e4f0e897',
+    name: '春风南岸花园三期',
+    district: '高新区'
   }
 ];
 

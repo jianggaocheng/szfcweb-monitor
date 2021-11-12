@@ -56,12 +56,32 @@ function report() {
 
   for (let i=0; i<PROJECT_LIST.length; i++) {
     let project = PROJECT_LIST[i];
-    let totalCount = _.filter(totalHouseList, (value) => value.project.id == project.id).length;
-    let unsellCount = _.filter(totalHouseList, {houseStatus: 0, project: project}).length;
-    
+    let projectHouseList =  _.filter(totalHouseList, (value) => value.project.id == project.id);
+    let totalCount = projectHouseList.length;
+    let unsellCount = _.filter(projectHouseList, {houseStatus: 0}).length;
+
+    let buildingList = _.groupBy(projectHouseList, (o) => {
+      return o.building.name;
+    });
+  
     let sellProgress = _.round(1 - (unsellCount/totalCount), 2);
+
     logger.info(`${project.name} 总共: [${totalCount}] 已售出: [${totalCount-unsellCount}] 销售率: [${sellProgress}]`);
-    report += `${project.name} \n总共: [${totalCount}] \n已售出: [${totalCount-unsellCount}] \n销售率: [${sellProgress}]\n\n\n`
+    report += `${project.name} \n总共: [${totalCount}] \n已售出: [${totalCount-unsellCount}] \n销售率: [${sellProgress}]\n\n`
+
+    // 每幢网签统计
+    for (let buildingName of Object.keys(buildingList)) {
+      let buildHouseList = buildingList[buildingName];
+      let buildingUnsell = _.filter(buildHouseList, {houseStatus: 0}).length;
+      let buildingSelling = _.filter(buildHouseList, {houseStatus: 1}).length;
+      let buildingSelled = _.filter(buildHouseList, {houseStatus: 2}).length;
+      let buildingLocked = _.filter(buildHouseList, {houseStatus: 3}).length;
+
+      logger.info(`${buildingName}# ${buildingUnsell}/${buildingSelling}/${buildingSelled}/${buildingLocked}/${buildHouseList.length}`);
+      report += `${buildingName}# ${buildingUnsell}/${buildingSelling}/${buildingSelled}/${buildingLocked}/${buildHouseList.length}\n`
+    }
+
+    report += `\n\n`;
   }
 
   let totalCount = totalHouseList.length;
@@ -70,6 +90,7 @@ function report() {
   logger.info(`合计总共: [${totalCount}] 已售出: [${totalCount-unsellCount}] 销售率: [${sellProgress}]`);
   report += `合计总共: [${totalCount}] \n已售出: [${totalCount-unsellCount}] \n销售率: [${sellProgress}]\n`;
 
+  logger.info(report);
   qywechat.sendMarkdown(report);
 }
 

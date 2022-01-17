@@ -15202,7 +15202,7 @@
   {
     "identifier": "c0976b7b-26eb-44dd-8670-3e82e4f0e897.30577_MD004.1203",
     "houseSN": "1203",
-    "houseStatus": 0,
+    "houseStatus": 1,
     "project": {
       "id": "c0976b7b-26eb-44dd-8670-3e82e4f0e897",
       "name": "春风南岸花园三期",

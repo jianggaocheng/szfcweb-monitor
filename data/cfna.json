@@ -2662,7 +2662,7 @@
   {
     "identifier": "b040951a-3028-4b95-b6a2-439e019d013e.30230_MD004.1703",
     "houseSN": "1703",
-    "houseStatus": 0,
+    "houseStatus": 1,
     "project": {
       "id": "b040951a-3028-4b95-b6a2-439e019d013e",
       "name": "春风南岸花园一期",

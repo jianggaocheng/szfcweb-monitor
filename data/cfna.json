@@ -249,7 +249,7 @@
   {
     "identifier": "b040951a-3028-4b95-b6a2-439e019d013e.30229_MD004.1402",
     "houseSN": "1402",
-    "houseStatus": 0,
+    "houseStatus": 1,
     "project": {
       "id": "b040951a-3028-4b95-b6a2-439e019d013e",
       "name": "春风南岸花园一期",
@@ -3137,7 +3137,7 @@
   {
     "identifier": "b040951a-3028-4b95-b6a2-439e019d013e.30230_MD004.1104",
     "houseSN": "1104",
-    "houseStatus": 0,
+    "houseStatus": 1,
     "project": {
       "id": "b040951a-3028-4b95-b6a2-439e019d013e",
       "name": "春风南岸花园一期",

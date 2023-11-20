@@ -8286,7 +8286,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30582_MD004.901",
     "houseSN": "901",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -9122,7 +9122,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.2404",
     "houseSN": "2404",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -9426,7 +9426,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.2004",
     "houseSN": "2004",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -9464,7 +9464,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.1902",
     "houseSN": "1902",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -9502,7 +9502,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.1904",
     "houseSN": "1904",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -9616,7 +9616,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.1702",
     "houseSN": "1702",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -9768,7 +9768,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.1502",
     "houseSN": "1502",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -10547,7 +10547,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30584_MD004.503",
     "houseSN": "503",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -11421,7 +11421,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30580_MD004.1904",
     "houseSN": "1904",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -12124,7 +12124,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30580_MD004.901",
     "houseSN": "901",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -12656,7 +12656,7 @@
   {
     "identifier": "4e5947bb-75a9-4a09-8167-291c7d16a3e2.30580_MD004.201",
     "houseSN": "201",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "4e5947bb-75a9-4a09-8167-291c7d16a3e2",
       "name": "春风南岸花园二期",
@@ -14271,7 +14271,7 @@
   {
     "identifier": "c0976b7b-26eb-44dd-8670-3e82e4f0e897.30583_MD004.2401",
     "houseSN": "2401",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "c0976b7b-26eb-44dd-8670-3e82e4f0e897",
       "name": "春风南岸花园三期",
@@ -15525,7 +15525,7 @@
   {
     "identifier": "c0976b7b-26eb-44dd-8670-3e82e4f0e897.30583_MD004.201",
     "houseSN": "201",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "c0976b7b-26eb-44dd-8670-3e82e4f0e897",
       "name": "春风南岸花园三期",
@@ -17634,7 +17634,7 @@
   {
     "identifier": "c0976b7b-26eb-44dd-8670-3e82e4f0e897.30577_MD004.1601",
     "houseSN": "1601",
-    "houseStatus": 3,
+    "houseStatus": 0,
     "project": {
       "id": "c0976b7b-26eb-44dd-8670-3e82e4f0e897",
       "name": "春风南岸花园三期",
